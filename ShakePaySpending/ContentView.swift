@@ -7,31 +7,41 @@
 
 import SwiftUI
 
-struct row: Identifiable {
-//    let date: Date = Date()
-    let description: String = "Description"
-    let debit: Double
-    let credit: String = "100.0"
-    let id = UUID()
-    
-    var debitString: String {
-        "\(debit)"
-    }
-}
-
 struct ContentView: View {
-    let rows = Array(repeating: row(debit: 10.2), count: 10)
+    @EnvironmentObject var ViewModel: ViewModel
     var body: some View {
-        Table(rows) {
-            TableColumn("Description", value: \.description).width(max: 100)
-            TableColumn("Debit", value: \.debitString).width(max: 60)
-            TableColumn("Credit", value: \.credit).width(max: 60)
+        NavigationView {
+            List(ViewModel.years, id: \.self) { year in
+                NavigationLink(year, destination: months(for: year))
+            }
+            Text("Select a Year")
+        }
+    }
+    
+    @ViewBuilder
+    func months(for year: String) -> some View {
+        NavigationView {
+            List(ViewModel.months(for: year), id: \.self) { month in
+                NavigationLink(month, destination: cardTransactions(year, month))
+            }
+            Text("Select a Month")
+        }
+    }
+    
+    @ViewBuilder
+    func cardTransactions(_ year: String, _ month: String) -> some View {
+        let cardTransactions = ViewModel.getCardTransactions(year, month)
+        Table(cardTransactions) {
+            TableColumn("Date", value: \.date)
+            TableColumn("Description", value: \.description)
+            TableColumn("Debit", value: \.debit)
+            TableColumn("Credit", value: \.credit)
         }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().environmentObject(ViewModel())
     }
 }

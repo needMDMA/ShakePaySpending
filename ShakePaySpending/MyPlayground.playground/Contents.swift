@@ -1,8 +1,8 @@
 import Foundation
 import TabularData
 
-
-var url = URL(filePath: "/Users/olivierlambertrouillard/Downloads/transactions_summary.csv")
+print()
+var url = URL(filePath: "/Users/\(NSUserName())/Downloads/transactions_summary.csv")
 var data = DataFrame()
 
 let options = CSVReadingOptions(hasHeaderRow: true)
@@ -17,6 +17,7 @@ do {
     print("failed")
 }
 
+print(data)
 var cardTransactions = data.filter(on: ColumnID("Transaction Type", String.self)) { $0 == "card transactions"}
 
 var new = cardTransactions["Date"].map { date in
@@ -26,16 +27,16 @@ var new = cardTransactions["Date"].map { date in
             return elem
         }
     }
-    return 0
+    return -1
 }
 print(Set(new).sorted())
 
 
-cardTransactionsYear = cardTransactions.filter(on: "Date", Date.self) { date in
-    if let date = as? Date {
-        
-    }
-}
+//cardTransactionsYear = cardTransactions.filter(on: "Date", Date.self) { date in
+//    if let date = as? Date {
+//
+//    }
+//}
 
 //// Create String
 //let string = "2023/07/01"

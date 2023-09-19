@@ -11,7 +11,7 @@ import SwiftUI
 struct ShakePaySpendingApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environmentObject(ViewModel())
         }
     }
 }
