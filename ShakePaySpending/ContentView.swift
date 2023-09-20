@@ -9,12 +9,41 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var ViewModel: ViewModel
+    
     var body: some View {
-        NavigationView {
-            List(ViewModel.years, id: \.self) { year in
-                NavigationLink(year, destination: months(for: year))
+        ZStack {
+            if isLoaded {
+                NavigationView {
+                    List(ViewModel.years, id: \.self) { year in
+                        NavigationLink(year, destination: months(for: year))
+                    }
+                    Text("Select a Year")
+                }
+            } else {
+                importButton
             }
-            Text("Select a Year")
+        }.frame(minWidth: 800, minHeight: 400)
+    }
+    
+    var isLoaded: Bool {
+        if ViewModel.viewModel.statement.isEmpty {
+            return false
+        }
+        return true
+    }
+    
+    var importButton: some View {
+        Button {
+            let panel = NSOpenPanel()
+            panel.allowsMultipleSelection = false
+            panel.canChooseDirectories = false
+            if panel.runModal() == .OK {
+                if let url = panel.url {
+                    ViewModel.loadStatement(url: url)
+                }
+            }
+        } label: {
+            Text("Import Statement (Only ShakePay)")
         }
     }
     

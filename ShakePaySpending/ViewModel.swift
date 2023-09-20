@@ -113,6 +113,10 @@ class ViewModel: ObservableObject {
         return filteredTransactions
     }
     
+    func loadStatement(url: URL) {
+        viewModel.loadDataFrame(url: url)
+    }
+    
     struct CardTransaction: Identifiable {
         let date: String
         let description: String

@@ -9,22 +9,23 @@ import Foundation
 import TabularData
 
 struct StatementModel {
-    private let url = URL(filePath: "/Users/\(NSUserName())/Downloads/transactions_summary.csv")
-    private(set) var statement: DataFrame
+    private var dataFrame: DataFrame = DataFrame()
     
-    init() {
+    public var statement: DataFrame {
+        dataFrame
+    }
+    
+    mutating func loadDataFrame(url: URL) {
         let options = CSVReadingOptions(hasHeaderRow: true)
-
+        
         do {
-            statement = try DataFrame(
+            dataFrame = try DataFrame(
                 contentsOfCSVFile: url,
                 columns: ["Date", "Source / Destination", "Amount Debited", "Amount Credited", "Transaction Type"],
                 options: options
             )
         } catch {
             print(error)
-            statement = DataFrame()
-            print("failed")
         }
     }
 }
