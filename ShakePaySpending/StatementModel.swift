@@ -22,24 +22,9 @@ struct StatementModel {
             columns: ["Date", "Source / Destination", "Amount Debited", "Amount Credited", "Transaction Type"],
             options: options
             )
-    }
-    
-    init() {
         
+        // add a category columsn
     }
     
-    
-    mutating func loadDataFrame(url: URL) {
-        let options = CSVReadingOptions(hasHeaderRow: true)
-        
-        do {
-            dataFrame = try DataFrame(
-                contentsOfCSVFile: url,
-                columns: ["Date", "Source / Destination", "Amount Debited", "Amount Credited", "Transaction Type"],
-                options: options
-            )
-        } catch {
-            print(error)
-        }
-    }
+    init() { }
 }
