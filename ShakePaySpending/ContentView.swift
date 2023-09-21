@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var ViewModel: ViewModel
+    @ObservedObject var viewModel: ViewModel
+    
     
     var body: some View {
         ZStack {
             if isLoaded {
                 NavigationView {
-                    List(ViewModel.years, id: \.self) { year in
+                    List(viewModel.years, id: \.self) { year in
                         NavigationLink(year, destination: months(for: year))
                     }
                     Text("Select a Year")
@@ -26,7 +27,7 @@ struct ContentView: View {
     }
     
     var isLoaded: Bool {
-        if ViewModel.viewModel.statement.isEmpty {
+        if viewModel.viewModel.statement.isEmpty {
             return false
         }
         return true
@@ -39,7 +40,7 @@ struct ContentView: View {
             panel.canChooseDirectories = false
             if panel.runModal() == .OK {
                 if let url = panel.url {
-                    ViewModel.loadStatement(url: url)
+                    viewModel.loadStatement(url: url)
                 }
             }
         } label: {
@@ -50,7 +51,7 @@ struct ContentView: View {
     @ViewBuilder
     func months(for year: String) -> some View {
         NavigationView {
-            List(ViewModel.months(for: year), id: \.self) { month in
+            List(viewModel.months(for: year), id: \.self) { month in
                 NavigationLink(month, destination: cardTransactions(year, month))
             }
             Text("Select a Month")
@@ -59,18 +60,18 @@ struct ContentView: View {
     
     @ViewBuilder
     func cardTransactions(_ year: String, _ month: String) -> some View {
-        let cardTransactions = ViewModel.getCardTransactions(year, month)
+        let cardTransactions = viewModel.getCardTransactions(year, month)
         Table(cardTransactions) {
-            TableColumn("Date", value: \.date)
-            TableColumn("Description", value: \.description)
-            TableColumn("Debit", value: \.debit)
-            TableColumn("Credit", value: \.credit)
+            TableColumn("Date", value: \.date).width(100)
+            TableColumn("Description", value: \.description).width(200)
+            TableColumn("Debit", value: \.debit).width(60)
+            TableColumn("Credit", value: \.credit).width(60)
         }
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView().environmentObject(ViewModel())
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView(viewModel: )
+//    }
+//}

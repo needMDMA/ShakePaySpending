@@ -10,8 +10,8 @@ import SwiftUI
 @main
 struct ShakePaySpendingApp: App {
     var body: some Scene {
-        WindowGroup {
-            ContentView().environmentObject(ViewModel())
+        DocumentGroup(newDocument: { ViewModel() }) { config in
+            ContentView(viewModel: config.document)
         }
     }
 }
