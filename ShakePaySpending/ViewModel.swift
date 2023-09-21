@@ -7,9 +7,33 @@
 
 import Foundation
 import TabularData
+import SwiftUI
+import UniformTypeIdentifiers
 
-class ViewModel: ObservableObject {
-    @Published var viewModel = StatementModel()
+class ViewModel: ReferenceFileDocument {
+    func snapshot(contentType: UTType) throws -> Data {
+        try viewModel.statement.csvRepresentation()
+    }
+    
+    func fileWrapper(snapshot: Data, configuration: WriteConfiguration) throws -> FileWrapper {
+        return FileWrapper(regularFileWithContents: snapshot)
+    }
+        
+    static var readableContentTypes: [UTType] { [.commaSeparatedText] }
+    
+    required init(configuration: ReadConfiguration) throws {
+        if let data = configuration.file.regularFileContents {
+            viewModel = try StatementModel(csvData: data)
+        } else {
+            throw CocoaError(.fileReadCorruptFile)
+        }
+    }
+    
+    init() {
+
+    }
+    
+    @Published var viewModel: StatementModel = StatementModel()
     
     var cardTransactions: DataFrame.Slice {
         viewModel.statement.filter(on: "Transaction Type", String.self) { $0 == "card transactions"}
@@ -75,7 +99,7 @@ class ViewModel: ObservableObject {
                 let sourceDateComponents = Calendar.current.dateComponents([.year, .month], from: sourceDate)
                 if sourceDateComponents.year == targetDateComponents.year && sourceDateComponents.month == targetDateComponents.month {
 
-                    dateFormatter.dateFormat = "dd/MM/yyyy"
+                    dateFormatter.dateFormat = "dd MMMM yyyy"
                     let dateString = dateFormatter.string(from: sourceDate)
 
                     var description: String {
